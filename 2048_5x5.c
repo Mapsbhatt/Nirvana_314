@@ -16,7 +16,7 @@ void assign()
     {
         for(int y=0; y<5; y++)
         {
-            *ptr[c]= a[x][y];
+            ptr[c]= &a[x][y];
             c++;
         }
     }
@@ -267,6 +267,8 @@ void key()
 
 void addran()
 {
+    assign();
+
     srand(time(NULL));
     int m=0; 
     int b[25];

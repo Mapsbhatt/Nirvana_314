@@ -16,7 +16,7 @@ void assign()
     {
         for(int y=0; y<4; y++)
         {
-            *ptr[c]= a[x][y];
+            ptr[c]= &a[x][y];
             c++;
         }
     }
@@ -267,6 +267,8 @@ void key()
 
 void addran()
 {
+    assign();
+
     srand(time(NULL));
     int m=0; 
     int b[16];
@@ -315,7 +317,10 @@ int main()
         addran();
 
         if(*ptr[0]!=0 && *ptr[1]!=0 && *ptr[2]!=0 && *ptr[3]!=0 && *ptr[4]!=0 && *ptr[5]!=0 && *ptr[6]!=0 && *ptr[7]!=0 && *ptr[8]!=0 && *ptr[9]!=0 && *ptr[10]!=0 && *ptr[11]!=0 && *ptr[12]!=0 && *ptr[13]!=0 && *ptr[14]!=0 && *ptr[15]!=0) 
-        {break;}     
+        {
+            printf("Game Over");
+            break;
+        }     
 
         
     }

@@ -16,10 +16,23 @@ void assign()
     {
         for(int y=0; y<3; y++)
         {
-            *ptr[c]= a[x][y];
+            ptr[c]= &a[x][y];
             c++;
         }
     }
+}
+
+void delay(int number_of_seconds)
+{
+    // Converting time into milli_seconds
+    int milli_seconds = 1000 * number_of_seconds;
+  
+    // Storing start time
+    clock_t start_time = clock();
+  
+    // looping till required time is not achieved
+    while (clock() < start_time + milli_seconds)
+        ;
 }
 
 void ranvalue(int *valv)
@@ -58,8 +71,17 @@ void initpos()
     m= val[0];
     n= val[1];
 
-    a[i][j]= m;          // What if i=k and j=l, for that try and write if-else statement.
+    a[i][j]= m;          
     a[k][l]= n;
+    for(int x= 0; x<3; x++)
+    {
+        printf("|");
+        for(int y=0; y<3; y++)
+        {
+          printf("  %d  ", a[x][y]);
+        }
+        printf("|\n");
+    }
 }
 
 
@@ -267,6 +289,7 @@ void key()
 
 void addran()
 {
+    assign();
     srand(time(NULL));
     int m=0; 
     int b[9];
@@ -288,20 +311,11 @@ int main()
 {
 
     initpos();
-    for(int x= 0; x<3; x++)
-    {
-        printf("|");
-        for(int y=0; y<3; y++)
-        {
-          printf("  %d  ", a[x][y]);
-        }
-        printf("|\n");
-    }
    
     while(1)
     {
-        key();
-    
+        key();       
+
         for(int x= 0; x<3; x++)
     {
         printf("|");
@@ -313,10 +327,12 @@ int main()
     }
         //score();
         addran();
-
         if(*ptr[0]!=0 && *ptr[1]!=0 && *ptr[2]!=0 && *ptr[3]!=0 && *ptr[4]!=0 && *ptr[5]!=0 && *ptr[6]!=0 && *ptr[7]!=0 && *ptr[8]!=0) 
-        {break;}     
-
+        {
+            printf("Game Over");
+            break;
+        }     
+         
         
     }
 
