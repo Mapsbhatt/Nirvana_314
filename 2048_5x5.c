@@ -4,23 +4,12 @@
 #include <time.h>
 
 int a[5][5]={0};
+int a1[5][5]={0};
 int *ptr[25];
 int val[2]={0};
 int pos[4]={0};
+int pt=0;
 int i,j, k, l,m, n; 
-
-void assign()
-{
-    int c=0;
-    for(int x=0; x<5; x++)
-    {
-        for(int y=0; y<5; y++)
-        {
-            ptr[c]= &a[x][y];
-            c++;
-        }
-    }
-}
 
 void ranvalue(int *valv)
 {
@@ -42,7 +31,7 @@ void ranpos(int *posi)
     srand(time(NULL));
     for(int x=0; x<4; x++)
     {
-        *posi= rand()%4;
+        *posi= rand()%5;
         posi++;
     }
 }
@@ -58,189 +47,314 @@ void initpos()
     m= val[0];
     n= val[1];
 
-    a[i][j]= m;          // What if i=k and j=l, for that try and write if-else statement.
-    a[k][l]= n;
+    if(i!=k && j!=l)
+    {
+        a[i][j]= m;          
+        a[k][l]= n;
+    }
+    else if(i==j==k==l)
+    {
+        a[1][1]= m;          
+        a[2][2]= n;
+    }
+    else
+    {
+        a[i][j]= m;          
+        a[l][k]= n;
+    }
+}
+
+void points(int point)
+{
+    pt= pt+ point;
+}
+
+void add_up(int ar[5][5])
+{
+    int score=0;
+    for(int y=0; y<5; y++)
+    {
+        for(int x=0; x<5; x++)
+        {
+            if(ar[x][y]== ar[x+1][y])
+            {
+                ar[x][y]= ar[x][y] + ar[x+1][y];
+                switch (x)
+                {
+                    case 0: ar[x+1][y]=ar[x+2][y];
+                            ar[x+2][y]=ar[x+3][y];
+                            ar[x+3][y]=ar[x+4][y];
+                            ar[x+4][y]=0;
+                            break;
+
+                    case 1: ar[x+1][y]=ar[x+2][y];
+                            ar[x+2][y]=ar[x+3][y];
+                            ar[x+3][y]=0;
+                            break;
+
+                    case 2: ar[x+1][y]=ar[x+2][y];
+                            ar[x+2][y]=0;
+                            break;        
+
+                    case 3: ar[x+1][y]=0;
+                            break;  
+                }    
+                score= score + ar[x][y];        
+            }
+        }    
+    }
+    points(score);
+}
+
+void up(int arr[5][5])
+{
+    int n=0;
+    int m=0;
+    int stor[5];
+    for(int y=0; y<5; y++)
+    {
+        for(int x=0; x<5; x++)
+        {
+            if(arr[x][y]!=0)
+            {
+                arr[n++][y]= arr[x][y];
+            }
+            if(x==4)
+            {
+                stor[m++]= n;
+            }
+        }
+        n=0;
+    }
+    m=0;
+    for(int y=0, m=0 ; y<5; y++, m++)
+    {
+        while(stor[m]< 5)
+        {
+          arr[stor[m]++][y]= 0;
+        }
+    }
+    
+    add_up(arr);
 }
 
 
-void up(int arr[5][5])
-{   printf("");
+void add_down(int ar[5][5])
+{
+    int score=0; 
     for(int y=0; y<5; y++)
     {
-        for(int x= 4;x>=0; x-- )
+        for(int x=4; x>0; x--)
         {
-            if(arr[x][y]!=0)
-            {   
-
-                if(arr[x][y]== arr[x-1][y])
+            if(ar[x][y]==ar[x-1][y])
+            {
+                ar[x][y]= ar[x][y] + ar[x-1][y];
+                switch (x)
                 {
-                    arr[x-1][y]= arr[x-1][y]+arr[x][y];
-                    arr[x][y]=0;
-                    if(arr[x-1][y]== arr[x-2][y])
-                    {
-                        break;
+                    case 4: ar[x-1][y]=ar[x-2][y];
+                            ar[x-2][y]=ar[x-3][y];
+                            ar[x-3][y]=ar[x-4][y];
+                            ar[x-4][y]=0;
+                            break;
 
-                    }
-                   
-                }
-                if(arr[x-1][y]==0)
-                {
-                   arr[x-1][y]= arr[x-1][y]+arr[x][y];
-                   arr[x][y]=0; 
-                }
-                if(arr[x][y]!= arr[x-1][y])
-                {continue;}
+                    case 3: ar[x-1][y]=ar[x-2][y];
+                            ar[x-2][y]=ar[x-3][y];
+                            ar[x-3][y]=0;
+                            break;
 
+                    case 2: ar[x-1][y]=ar[x-2][y];
+                            ar[x-2][y]=0;
+                            break;        
+
+                    case 1: ar[x-1][y]=0;
+                            break;                        
+                            
+                }
+                score= score + ar[x][y];
             }
-            if(arr[x][y]==0)
-                {continue;}
-        }
+        }    
     }
-}  
-
+    points(score);
+}
 
 void down(int arr[5][5])
-{  
+{
+    int n=4;
+    int m=0;
+    int stor[5];
     for(int y=0; y<5; y++)
-    {   //printf("12");
-        for(int x=4 ;x>1 ; x-- )
+    {
+        for(int x=4; x>=0; x--)
         {
             if(arr[x][y]!=0)
-            {   
-
-                if(arr[x][y]== arr[x-1][y])
-                {
-                    arr[x][y]= arr[x-1][y]+arr[x][y];
-                    arr[x-1][y]=arr[x-2][y];
-                    arr[x-2][y]=0;
-                    /*if(arr[x-1][y]== arr[x-2][y] && arr[x-1][y]!=0  && arr[x-2][y]!=0 )
-                    {
-                        break;
-
-                    }*/
-                   
-                }
-                if(arr[x-1][y]==0)
-                {
-                   arr[x-1][y]= arr[x-2][y];
-                   arr[x-2][y]=0; 
-                }
-                if(arr[x][y]!= arr[x-1][y])
-                {continue;}
-
-            }
-            if(arr[x][y]==0)
             {
-                if(arr[x][y]==0 && arr[x-1][y]==0 )
-                {
-                    arr[x][y]=arr[x-2][y];
-                    arr[x-2][y]=0;
-                }
-                if(arr[x-1][y]!=0)
-                {
-                    if(arr[x-2][y]== arr[x-1][y])
-                    {
-                        arr[x][y]= arr[x-2][y] + arr[x-1][y];
-                        arr[x-1][y]=arr[x-2][y]=0;
-                    }
-                    else
-                    {
-                        arr[x][y]=arr[x-1][y];
-                        arr[x-1][y]=arr[x-2][y];
-                        arr[x-2][y]=0;
-                    }
-                }
+                arr[n--][y]= arr[x][y];
+            }
+            if(x==0)
+            {
+                stor[m++]= n;
             }
         }
+        n=4;
     }
-}  
+    m=0;
+    for(int y=0, m=0 ; y<5; y++, m++)
+    {
+        while(stor[m]>=0)
+        {
+          arr[stor[m]--][y]= 0;
+        }
+    }
+    
+    add_down(arr);
+}
+
+
+void add_left(int ar[5][5])
+{
+    int score=0;
+    for(int x=0; x<5; x++)
+    {
+        for(int y=0; y<4; y++)
+        {
+            if(ar[x][y]== ar[x][y+1])
+            {
+                ar[x][y]= ar[x][y] + ar[x][y+1];
+                switch (y)
+                {
+                    case 0: ar[x][y+1]=ar[x][y+2];
+                            ar[x][y+2]=ar[x][y+3];
+                            ar[x][y+3]=ar[x][y+4];
+                            ar[x][y+4]=0;
+                            break;
+
+                    case 1: ar[x][y+1]=ar[x][y+2];
+                            ar[x][y+2]=ar[x][y+3];
+                            ar[x][y+3]=0;
+                            break;
+
+                    case 2: ar[x][y+1]=ar[x][y+2];
+                            ar[x][y+2]=0;
+                            break;        
+
+                    case 3: ar[x][y+1]=0;
+                            break;  
+                }  
+                score= score + ar[x][y];          
+            }
+        }    
+    }
+    points(score);
+}
 
 
 void left(int arr[5][5])
-{   printf("");
+{
+    int n=0;
+    int m=0;
+    int stor[5];
     for(int x=0; x<5; x++)
     {
-        for(int y= 4;y>0; y--)
+        for(int y=0; y<5; y++)
         {
             if(arr[x][y]!=0)
-            {   
-
-                if(arr[x][y]== arr[x][y-1])
-                {
-                    arr[x][y-1]= arr[x][y-1]+arr[x][y];
-                    arr[x][y]=0;
-                    if(arr[x][y-1]== arr[x][y-2])
-                    {
-                        break;
-
-                    }
-                   
-                }
-                if(arr[x][y-1]==0)
-                {
-                   arr[x][y-1]= arr[x][y-1]+arr[x][y];
-                   arr[x][y]=0; 
-                }
-                if(arr[x][y]!= arr[x][y-1])
-                {continue;}
-
+            {
+                arr[x][n++]= arr[x][y];
             }
-            if(arr[x][y]==0)
-                {
-                if(arr[x][y-1]==arr[x][y-2])
-                {
-                   arr[x][y-2]= arr[x][y-2]+arr[x][y-1];      
-                   arr[x][y-1]=0; 
-                }
-                }
+            if(y==4)
+            {
+                stor[m++]= n;
+            }
+        }
+        n=0;
+    }
+    m=0;
+    for(int x=0, m=0 ; x<5; x++, m++)
+    {
+        while(stor[m]< 5)
+        {
+          arr[x][stor[m]++]= 0;
         }
     }
-}  
+    
+    add_left(arr);
+}
 
+
+void add_right(int ar[5][5])
+{
+    int score= 0; 
+    for(int x=0; x<5; x++)
+    {
+        for(int y=4; y>0; y--)
+        {
+            if(ar[x][y]==ar[x][y-1])
+            {
+                ar[x][y]= ar[x][y] + ar[x][y-1];
+                switch (y)
+                {
+                    case 4: ar[x][y-1]=ar[x][y-2];
+                            ar[x][y-2]=ar[x][y-3];
+                            ar[x][y-3]=ar[x][y-4];
+                            ar[x][y-4]=0;
+                            break;
+
+                    case 3: ar[x][y-1]=ar[x][y-2];
+                            ar[x][y-2]=ar[x][y-3];
+                            ar[x][y-3]=0;
+                            break;
+
+                    case 2: ar[x][y-1]=ar[x][y-2];
+                            ar[x][y-2]=0;
+                            break;        
+
+                    case 1: ar[x][y-1]=0;
+                            break;                        
+                            
+                }
+                score= score + ar[x][y];
+            }
+        }    
+    }
+    points(score);
+}
 
 void right(int arr[5][5])
-{   printf("");
+{
+    int n=4;
+    int m=0;
+    int stor[5];
     for(int x=0; x<5; x++)
     {
-        for(int y=0 ;y<4; y++)
+        for(int y=4; y>=0; y--)
         {
             if(arr[x][y]!=0)
-            {   
-
-                if(arr[x][y]== arr[x][y+1])
-                {
-                    arr[x][y+1]= arr[x][y+1]+arr[x][y];
-                    arr[x][y]=0;
-                    if(arr[x][y+1]== arr[x][y+2])
-                    {
-                        break;
-
-                    }
-                   
-                }
-                if(arr[x][y+1]==0)
-                {
-                   arr[x][y+1]= arr[x][y+1]+arr[x][y];
-                   arr[x][y]=0; 
-                }
-                if(arr[x][y]!= arr[x][y+1])
-                {continue;}
-
+            {
+                arr[x][n--]= arr[x][y];
             }
-            if(arr[x][y]==0)
-                {
-                if(arr[x][y+1]==arr[x][y+2])
-                {
-                   arr[x][y+2]= arr[x][y+2]+arr[x][y+1];      
-                   arr[x][y+1]=0; 
-                }
-                }
+            if(y==0)
+            {
+                stor[m++]= n;
+            }
+        }
+        n=4;
+    }
+    m=0;
+    for(int x=0, m=0 ; x<5; x++, m++)
+    {
+        while(stor[m]>=0)
+        {
+          arr[x][stor[m]--]= 0;
         }
     }
-}  
+    
+    add_right(arr);
+}
+
 
 void key()
 {
+    fflush(stdin);
     char c= getchar();
 
     if(c== 'w')
@@ -265,60 +379,119 @@ void key()
 
 }
 
+void assign()
+{
+    for(int x=0; x<5; x++)
+    {
+        for(int y =0; y<5; y++)
+        {
+            a1[x][y]=a[x][y];
+        }
+    }
+}
+
 void addran()
 {
-    assign();
-
     srand(time(NULL));
     int m=0; 
+    int c[25];
     int b[25];
-    for(int x=0; x<25; x++)
+    for(int x=0; x<5; x++)
     {
-       if(*ptr[x]==0)
+     for(int y=0; y<5; y++)    
        {
-           b[m]= x;
-           m++; 
+        if(a[x][y]==0)
+        { 
+             b[m]= x;
+             c[m++]= y;
+        }
        }
     }
-    int n= rand()%(m+1);
-    *ptr[b[n]]= (rand()%10<5)?2:4;
+    
+    int valv_ran = rand()%(m);
+    a[b[valv_ran]][c[valv_ran]]= (rand()%10<5)?2:4;
     
 }
 
 
+int checkprev(int arr[5][5], int arr1[5][5])
+{
+    for(int x=0; x<5; x++)
+    {
+        for(int y=0; y<5; y++)
+        {
+            if(arr1[x][y]!=arr[x][y])
+            {
+                return 0;
+            }
+        }
+    }
+}
+
 int main()
 {
-
+    int count;
     initpos();
+
+
+    printf("\tTHE 2048 GAME \n\n\n");
+
+
     for(int x= 0; x<5; x++)
     {
         printf("|");
         for(int y=0; y<5; y++)
         {
-          printf("  %d  ", a[x][y]);
+          printf("\t%d\t", a[x][y]);
         }
         printf("|\n");
     }
 
-    while(1)
+
+    while(1)             
     {
+        assign();
         key();
-    
-        for(int x= 0; x<5; x++)
-    {
-        printf("|");
-        for(int y=0; y<5; y++)
+        if(checkprev(a, a1)==0)
         {
-          printf("  %d  ", a[x][y]);
+            addran();
         }
-        printf("|\n");
-    }
-        //score();
-        addran();
 
-        if(*ptr[0]!=0 && *ptr[1]!=0 && *ptr[2]!=0 && *ptr[3]!=0 && *ptr[4]!=0 && *ptr[5]!=0 && *ptr[6]!=0 && *ptr[7]!=0 && *ptr[8]!=0 && *ptr[9]!=0 && *ptr[10]!=0 && *ptr[11]!=0 && *ptr[12]!=0 && *ptr[13]!=0 && *ptr[14]!=0 && *ptr[15]!=0 && *ptr[16]!=0 && *ptr[17]!=0 && *ptr[18]!=0 && *ptr[19]!=0 && *ptr[20]!=0 && *ptr[21]!=0 && *ptr[22]!=0 &&* ptr[23]!=0 && *ptr[24]!=0) 
-        {break;}     
+        for(int x= 0; x<5; x++)
+        {
+            printf("|");
+            for(int y=0; y<5; y++)
+            {
+            printf("\t%d\t", a[x][y]);
+            }
+            printf("|\n");
+        }
 
+        printf("POINTS:- %d\n\n", pt);
+
+
+        if(pt>= 2048)
+        {
+            printf("YOU WON!!!!!!!!!!");
+            break;
+        }
+
+        count=0;
+        for(int x=0; x<5; x++)
+        {
+            for(int y=0; y<5; y++)
+            {
+                if(a[x][y]==0)
+                {
+                    count++;
+                }
+            }
+        }
+        if(count==25)
+        {
+            printf("GAME OVER!!!!");
+            break;
+        }
         
     }
 
